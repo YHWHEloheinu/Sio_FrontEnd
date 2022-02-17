@@ -1,0 +1,183 @@
+<app-navbar></app-navbar>
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-content">
+                <table width='100%'>
+                    <tr>
+                        <td>
+                            <img src="../../assets/Poligrafica_black.png">
+                        </td>
+                        <td class="orden">
+                            ORDEN DE PRODUCCIÓN <br>
+                            <b id='n_orden'>{{PRODUCTO.sort}}</b> <br>
+                            FECHA DE EMISION: {{PRODUCTO.fecha | date:'dd-MM-yyyy'}}
+                        </td>
+                    </tr>
+                </table>
+                <br>
+                <table border="solid 1px black" width='100%'>
+                    <tr>
+                        <td><b> CLIENTE: </b>{{PRODUCTO.cliente.nombre}}</td>
+                        <td><b> O.C.: </b>{{PRODUCTO.orden}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan='2'>
+                            <b> PRODUCTO: </b> {{PRODUCTO.cliente.codigo}} - {{PRODUCTO.producto.codigo}} - {{PRODUCTO.producto.version}} {{PRODUCTO.producto.producto}}
+                        </td>
+                    </tr>
+                </table>
+                <br>
+                <table class="table is-fullwidth">
+                    <tr class="has-text-centered is-selected" >
+                        <th class="has-text-centered" colspan='2'>ENTREGAS</th>
+                    </tr>
+                </table>
+                <table border="solid 1px black" width='100%'>
+                    <tr>
+                        <th> N° ENTREGA</th>
+                        <th> CANTIDAD</th>
+                        <th> FECHA</th>
+                        <th> OBSERVACIÓN</th>
+                    </tr>
+                    <tr>
+                        <td> 1</td>
+                        <td> {{PRODUCTO.cantidad}}</td>
+                        <td>{{PRODUCTO.fecha_s}}</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td> TOTAL</td>
+                        <td> {{PRODUCTO.cantidad}}</td>
+                    </tr>
+                </table>
+                <br>
+                <table class="table is-fullwidth">
+                    <tr class="has-text-centered is-selected" >
+                        <th class="has-text-centered" colspan='3'>MONTAJE Y DESARROLLO</th>
+                    </tr>
+                </table>
+                <table border='solid 1px black' width='100%'>
+                    <tr>
+                        <th> ESPECIFICACIÓN</th>
+                        <th> IMPRESIÓN</th>
+                        <th> POST-IMPRESION</th>
+                    </tr>
+                    <tr>
+                        <td>E {{PRODUCTO.cliente.codigo}} - {{PRODUCTO.producto.codigo}} - {{PRODUCTO.producto.version}} - {{PRODUCTO.producto.edicion}}</td>
+                        <td class="has-text-centered">
+                        <ng-container *ngFor='let material of PRODUCTO.producto.materiales'>
+                            <p *ngIf='material.producto.grupo.nombre != "Sustrato"'>
+                                {{material.producto.nombre}} ({{material.producto.marca}})<br>
+                            </p>
+                        </ng-container>
+                        </td>
+                        <td>
+                            <ng-container *ngFor='let post of PRODUCTO.producto.post'>
+                                 {{post}} <br>
+                            </ng-container>
+                        </td>
+                    </tr>
+                </table>
+                <br>
+                <table class="table is-fullwidth">
+                    <tr class="has-text-centered is-selected" >
+                        <th class="has-text-centered" colspan='3'>SUSTRATO</th>
+                    </tr>
+                </table>
+                <table border='solid 1px black' width='100%'>
+                    <tr>
+                        <td colspan='2'>
+                             <b> TIPO DE SUSTRATO: 
+                                <ng-container *ngFor='let material of PRODUCTO.producto.materiales'>
+                                    <ng-container *ngIf='material.producto.grupo.nombre === "Sustrato"'>
+                                        {{material.producto.nombre}} ({{material.producto.marca}})<br>
+                                    </ng-container>
+                                </ng-container>
+                            </b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b> TAMAÑO ORIGINAL: {{PRODUCTO.producto.dimensiones}}</b></td>
+                        <td> <b>DIRECCIÓN DE FIBRA: </b> {{PRODUCTO.producto.fibra}}</td>
+                    </tr>
+                    <tr>
+                        <td><b> DEMASIA:</b> {{PRODUCTO.demasia}}</td>
+                        <td><b> TAMAÑOS A IMPRIMIR: </b> {{PRODUCTO.paginas}}</td>
+                    </tr>
+                </table>
+                <hr>
+                <button class="button is-primary" (click)='descargarPDF()'>Descargar</button>
+        </div>
+        <!-- <div class="card-content">
+
+            <div class="orden">Orden de Producción</div>
+            <div class="op">
+                <b>
+                    {{PRODUCTO.sort}}
+                </b>
+            </div>
+            <table class="table is-fullwidth">
+                <tr>
+                    <td>
+                        <b>CLIENTE:</b> {{PRODUCTO.cliente.nombre}}
+                    </td>
+                    <td>
+                        <b>Orden De Compra:</b> {{PRODUCTO.orden}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan='2'>
+                            <b>PRODUCTO:</b> {{PRODUCTO.producto.producto}}
+                        </td>
+                    </tr>
+                    <tr class="has-text-centered is-selected" >
+                        <th class="has-text-centered" colspan='2'>ENTREGAS</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>Cantidad:</b> {{PRODUCTO.cantidad}} <br>
+                        </td>
+                        <td>
+                            <b>Fecha de Creacion: </b> {{PRODUCTO.fecha | date:'dd-MM-yyyy'}}
+                        </td>
+                    </tr>
+                    <tr class="has-text-centered is-selected" >
+                        <th class="has-text-centered" colspan='2'>MONTAJE Y DESARROLLO</th>
+                    </tr>
+                    <tr class="has-text-centered">
+                        <th class="has-text-centered is-selected">MATERIALES</th>
+                        <th class="has-text-centered is-selected">HOJAS</th>
+                    </tr>
+                    <tr>
+                        <td rowspan="2">
+                            <ng-container *ngFor='let material of PRODUCTO.producto.materiales'>
+                                {{material.material}} <br>
+                            </ng-container>
+                        </td>
+                        <td>
+                            <b>Ejemplares Montados:</b>
+                            {{PRODUCTO.producto.ejemplares}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>Hojas:</b>
+                            {{PRODUCTO.paginas}}
+                        </td>
+                    </tr>
+                    <tr class="has-text-centered">
+                        <th class="is-selected" colspan='2'>POST - IMPRESION</th>
+                    </tr>
+                    <tr>
+                        <td colspan='2'>
+                            <b>Corte:</b>
+                            {{PRODUCTO.producto.post}}
+                        </td>
+                    </tr>
+                </table>
+                <div class="column">
+                </div>
+            <hr>
+        </div> -->
+    </div>
+</div>

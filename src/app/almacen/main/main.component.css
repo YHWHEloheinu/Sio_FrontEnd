@@ -1,0 +1,104 @@
+@font-face {
+    font-family: Roboto;
+    src: url(../../../assets/Roboto/Roboto-Black.ttf);
+}
+
+@keyframes spin {
+    from{
+        transform:rotate(0deg)
+    }
+    to{
+        transform:rotate(360deg)
+    }
+}
+
+
+.empty{
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding:5px;
+    color: white;
+    text-align: center;
+    font-size: large;
+    background-color: rgb(247, 147, 147);
+}
+
+.mensaje{
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding:5px;
+    color: rgb(240, 132, 132);
+    text-align: center;
+    font-size: large;
+    background-color: rgb(248, 220, 220);
+}
+
+.loading{
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding:30px;
+    background-color: rgb(169, 238, 186);
+    text-align: center;
+    font-size: large;
+    color: white;
+}
+
+.titulo{
+    font-size: 50px;
+    font-family: Roboto;
+}
+.subtitulo{
+    font-size: 30px;
+    font-family: Roboto;
+}
+.mt-5{
+    margin-top: 5px;
+}
+
+.separador{
+    display: block;
+    background-color: black;
+    border-radius: 5px;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+}
+
+
+
+.informacion{
+    margin-top:-69px;
+    box-sizing: border-box;
+    visibility: hidden;
+    width: 230px;
+    height: 60px;
+    background-color: black;
+    border-radius: 5px;
+    color: white;
+    padding: 10px;
+    z-index: 100;
+}
+
+.Inf_lotes:hover{
+    cursor: pointer;
+}
+
+.Inf_lotes:hover .informacion{
+    visibility: visible
+}
+
+.fijar_lote{
+    display:none;
+}
+
+#boton_add{
+    color:black
+}
+
+#boton_add:hover{
+    color:rgb(79, 196, 64);
+    cursor: pointer;
+}

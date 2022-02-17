@@ -1,0 +1,193 @@
+<div class="columns mt-5">
+    <div class="column is-3">
+        <div class="card">
+            <div class="card-content">
+                <div class="field">
+                    <label class="label">Cliente</label>
+                    <div class="control">
+                        <div class="select">
+                            <select id='cliente' (change)='cliente_selected($event)'>
+                                <option value='0'>Selecciona Cliente</option>
+                                <option *ngFor='let cliente of CLIENTES' value="{{cliente._id}}">{{cliente.nombre}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field" *ngIf='cs'>
+                    <label class="label">Producto</label>
+                    <div class="control">
+                        <div class="select">
+                            <select id='producto' (change)='producto_selected($event)'>
+                                <option value='0'>Selecciona Producto</option>
+                                <option *ngFor='let producto of PRODUCTOS' value='{{producto._id}}'>{{producto.producto}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field" *ngIf='ps'>
+                    <label class="label">Orden de Compra</label>
+                    <div class="control">
+                        <!-- <input type="text" class="input" (change)='orden_selected($event)' [(ngModel)]="userName"> -->
+                        <input type="text" class="input" [(ngModel)]="oc_">
+                    </div>
+                </div>
+
+                <button class="button is-primary" (click)='modal_nueva_orden()' [disabled]="!oc_">Realizar Programación</button>
+            </div>
+        </div>
+    </div>
+    <div class="column" *ngIf='Fases'>
+        <div class="card planificacion">
+            <div class="card-content">
+                <div class="titulo">Fases de la Producción</div>
+                <div class="card" *ngFor='let fase of PRODUCTO.grupo.tipos'>
+                    <div class="card-content">
+                        <div class="columns">
+                            <div class="column">
+                                <div class="subtitulo">
+                                    {{fase}}
+                                </div>
+                            </div>
+                            <div class="column"><div class="field">
+                                <label class="label">Maquina</label>
+                                <div class="control">
+                                    <div class="select">
+                                        <select (change)='colocarFecha($event, fase)' id='{{fase}}-maquina'>
+                                                <option value="">Selecciona Maquina</option>
+                                            <ng-container *ngFor='let maquina of MAQUINAS'>
+                                                <option value="{{maquina._id}}" *ngIf='maquina.tipo === fase'>{{maquina.nombre}}</option>
+                                            </ng-container>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div></div>
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">
+                                        Fecha de Inicio
+                                    </label>
+                                    <div class="control">
+                                        <input type="date" class="input" id='{{fase}}' (change)='reprogramar($event, fase)'>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">
+                                        Culminación Estimada
+                                    </label>
+                                    <div class="control">
+                                        <input type="date" class="input" id='{{fase}}-C' disabled>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="button is-primary mt-5" (click)='finalizar(cantidad)'>Generar Orden de Produccion</button>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<div class="modal" [ngClass]="{'is-active':NUEVA_ORDEN}">
+    <div class="modal-background" (click)='modal_nueva_orden()'></div>
+    <div class="modal-card">
+        <div class="modal-card-body">
+            <div class="subtitulo">Nueva Orden de Producción</div>
+            <hr>
+            <div class="columns">
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Cantidad</label>
+                        <div class="control">
+                            <input type="number" class="input" value='1000' (change)='Cantidad($event)' #cantidad>
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Ej. Montados</label>
+                        <div class="control">
+                            <input type="number" class="input" [value]='PRODUCTO.ejemplares' (change)='Ejemplares($event.target.value)'>
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Demasia (%)</label>
+                        <div class="control">
+                            <input type="number" class="input" value='0' (change)='Demasia($event.target.value)'>
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Fecha Solic.</label>
+                        <div class="control">
+                            <input type="date" class="input" value='0' (change)='Fecha_s($event.target.value)'>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <b>Sustrato</b><br>
+            <p *ngFor='let materiales of PRODUCTO.materiales'>
+                <ng-container *ngIf='materiales.producto.grupo.nombre === "Sustrato"'>
+                    {{materiales.producto.nombre}} {{materiales.producto.marca}} ({{materiales.producto.ancho}} x {{materiales.producto.largo}}) x {{paginas}} Hojas
+                </ng-container>
+            </p>
+            <hr>
+            <b>Materia Prima</b>
+            <div *ngIf="SinMaterial">
+                <article class="message is-danger">
+                    <div class="message-body">
+                      Actualmente en su inventario no hay registrada la materia prima solicitada para realizar este producto, ingrese nueva materia e intentelo de nuevo
+                    </div>
+                  </article>
+            </div>
+            <table class="table is-fullwidth" *ngIf="!SinMaterial">
+                <thead>
+                    <tr>
+                        <th>Mat. a utilizar</th>
+                        <th>Cant. Necesaria</th>
+                        <th>Cant. Almacen</th>
+                        <th>Cant. Restante</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container *ngFor='let material of PRODUCTO.materiales;let i = index'>
+                    <tr *ngIf='material.producto.grupo.nombre != "Sustrato"'>
+                            <td>
+                                {{material.producto.nombre}}({{material.producto.marca}})
+                            </td>
+                            <td>
+                                {{(material.cantidad / 1000) * Cantidad_ejemplares}}
+                            </td>
+                            <td >
+                                <ng-container *ngFor="let totales of TOTALES">
+                                    <p *ngIf="material.producto.nombre === totales.material && material.producto.marca === totales.marca">
+                                        {{totales.total * totales.neto}}
+                                    </p>
+                                </ng-container>
+                                <!-- {{CANTIDAD[i].material.neto * CANTIDAD[i].cantidad}} -->
+                            </td>
+                            <td>
+                                <ng-container *ngFor="let totales of TOTALES">
+                                    <p *ngIf="material.producto.nombre === totales.material && material.producto.marca === totales.marca">
+                                        {{totales.total * totales.neto - (material.cantidad / 1000) * Cantidad_ejemplares}}
+                                        {{alertaRoja(totales.total * totales.neto - (material.cantidad / 1000) * Cantidad_ejemplares)}}
+                                    </p>
+                                </ng-container>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </table>
+            <button class="button is-primary" (click)='TimesTime()' *ngIf="!SinMaterial">Gestionar tiempo</button>
+        </div>
+    </div>
+</div>
